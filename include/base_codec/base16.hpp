@@ -29,6 +29,9 @@ auto base16_encode(
  *
  * @param[in] a_data Base64 encoded string to decode.
  * @param[in][out] a_ec std::error_code that gets set if a problem occurs.
+ * @param[in] a_strict Enable/disable strict mode. When on - if an invalid Base16 alphabet
+ * character is encountered - an error is returned, else it just gets ignored and the function
+ * proceeds to the next character. Disabling this check is not recommended.
  *
  * @returns std::vector<std::uint8_t> Byte representation of the decoded string.
  */
