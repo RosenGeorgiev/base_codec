@@ -103,6 +103,19 @@ auto base16_decode(
     return ret;
 }
 
+auto is_base16(std::string_view const& a_data) -> bool
+{
+    for (auto const datum : a_data)
+    {
+        if (!base16_decode_alpahbet.contains(datum))
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 }   // namespace base_codec
 }   // namespace rs
 

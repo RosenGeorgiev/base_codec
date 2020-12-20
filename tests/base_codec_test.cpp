@@ -5,10 +5,9 @@
 #include <base_codec/base16.hpp>
 
 
-// TODO - Decode illegal
 TEST_CASE(
     "Base16",
-    "[base16_encode][base16_decode]"
+    "[base16_encode][base16_decode][is_base16]"
 )
 {
     SECTION("Encode empty")
@@ -115,6 +114,12 @@ TEST_CASE(
         std::error_code ec;
         rs::base_codec::base16_decode(base64_str, ec);
         REQUIRE(ec);
+    }
+
+    SECTION("Validate if string is Base16 encoded")
+    {
+        REQUIRE(rs::base_codec::is_base16("666F6F626172"));
+        REQUIRE_FALSE(rs::base_codec::is_base16("Zm9vYmFy"));
     }
 }
 

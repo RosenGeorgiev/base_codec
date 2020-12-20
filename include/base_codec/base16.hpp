@@ -42,6 +42,16 @@ auto base16_decode(
 )
 -> std::vector<std::uint8_t>;
 
+/**
+ * @brief Checks if the string contains invalid Base16 characters.
+ *
+ * @param[in] String to check for conformance.
+ *
+ * @returns true If the string is possibly Base16 encoded.
+ * @returns false If the string can't be Base16 encoded, or at least not strictly.
+ */
+auto is_base16(std::string_view const& a_data) -> bool;
+
 }   // namespace base_codec
 }   // namespace rs
 
