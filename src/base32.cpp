@@ -6,8 +6,6 @@
 #include <stdexcept>
 #include <unordered_map>
 
-#include <iostream>
-
 
 namespace rs
 {
@@ -38,11 +36,12 @@ static std::unordered_map<char, uint8_t> const base32hex_decode_alpahbet = {
     {'P', 25}, {'Q', 26}, {'R', 27}, {'S', 28}, {'T', 29}, {'U', 30}, {'V', 31}
 };
 
-auto base32_encode(
+static auto base32_encode_algo(
     std::vector<std::uint8_t> const& a_data,
     std::error_code& a_ec,
     bool a_padding,
-    char a_pad_character
+    char a_pad_character,
+    std::vector<char> const& a_encode_alphabet
 )
 -> std::string
 {
@@ -67,7 +66,7 @@ auto base32_encode(
             num_bits -= 5;
             try
             {
-                s << base32_encode_alphabet.at(idx.to_ulong());
+                s << a_encode_alphabet.at(idx.to_ulong());
             } catch (std::out_of_range const& e)
             {
                 a_ec = std::make_error_code(std::errc::result_out_of_range);
@@ -85,7 +84,7 @@ auto base32_encode(
         {
             // NOTE - We need to pad the bits on the right with 0 to make it 5 bits.
             bit_buffer <<= 5 - num_bits;
-            s << base32_encode_alphabet.at((bit_buffer & mask).to_ulong());
+            s << a_encode_alphabet.at((bit_buffer & mask).to_ulong());
         } catch (std::out_of_range const& e)
         {
             a_ec = std::make_error_code(std::errc::result_out_of_range);
@@ -121,11 +120,47 @@ auto base32_encode(
     return s.str();
 }
 
-auto base32_decode(
+
+auto base32_encode(
+    std::vector<std::uint8_t> const& a_data,
+    std::error_code& a_ec,
+    bool a_padding,
+    char a_pad_character
+)
+-> std::string
+{
+    return base32_encode_algo(
+        a_data,
+        a_ec,
+        a_padding,
+        a_pad_character,
+        base32_encode_alphabet
+    );
+}
+
+auto base32hex_encode(
+    std::vector<std::uint8_t> const& a_data,
+    std::error_code& a_ec,
+    bool a_padding,
+    char a_pad_character
+)
+-> std::string
+{
+    return base32_encode_algo(
+        a_data,
+        a_ec,
+        a_padding,
+        a_pad_character,
+        base32hex_encode_alphabet
+    );
+}
+
+static auto base32_decode_algo(
     std::string_view const& a_data,
     std::error_code& a_ec,
     bool a_strict,
-    char a_pad_character
+    char a_pad_character,
+    std::unordered_map<char, uint8_t> const& a_decode_alphabet
 )
 -> std::vector<std::uint8_t>
 {
@@ -144,7 +179,7 @@ auto base32_decode(
 
         try
         {
-            std::uint8_t value = base32_decode_alpahbet.at(datum);
+            std::uint8_t value = a_decode_alphabet.at(datum);
             bit_buffer <<= 5;
             bit_buffer |= value;
             num_bits += 5;
@@ -173,21 +208,74 @@ auto base32_decode(
     return ret;
 }
 
-auto is_base32(
+auto base32_decode(
     std::string_view const& a_data,
+    std::error_code& a_ec,
+    bool a_strict,
     char a_pad_character
+)
+-> std::vector<std::uint8_t>
+{
+    return base32_decode_algo(
+        a_data,
+        a_ec,
+        a_strict,
+        a_pad_character,
+        base32_decode_alpahbet
+    );
+}
+
+auto base32hex_decode(
+    std::string_view const& a_data,
+    std::error_code& a_ec,
+    bool a_strict,
+    char a_pad_character
+)
+-> std::vector<std::uint8_t>
+{
+    return base32_decode_algo(
+        a_data,
+        a_ec,
+        a_strict,
+        a_pad_character,
+        base32hex_decode_alpahbet
+    );
+}
+
+static auto is_base32_algo(
+    std::string_view const& a_data,
+    char a_pad_character,
+    std::unordered_map<char, uint8_t> const& a_verify_alphabet
 )
 -> bool
 {
     for (auto const datum : a_data)
     {
-        if (datum != a_pad_character && !base32_decode_alpahbet.contains(datum))
+        if (datum != a_pad_character && !a_verify_alphabet.contains(datum))
         {
             return false;
         }
     }
 
     return true;
+}
+
+auto is_base32(
+    std::string_view const& a_data,
+    char a_pad_character
+)
+-> bool
+{
+    return is_base32_algo(a_data, a_pad_character, base32_decode_alpahbet);
+}
+
+auto is_base32hex(
+    std::string_view const& a_data,
+    char a_pad_character
+)
+-> bool
+{
+    return is_base32_algo(a_data, a_pad_character, base32hex_decode_alpahbet);
 }
 
 }   // namespace base_codec
