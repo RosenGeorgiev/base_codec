@@ -18,7 +18,7 @@ namespace base_codec
  * @param[in] a_data Bytes to encode.
  * @param[in][out] a_ec std::error_code that gets set if a problem occurs.
  *
- * @returns std::string Base16 representation of the data.
+ * @returns std::string Base16 representation of the data. Empty if an error occurred.
  */
 auto base16_encode(
     std::vector<std::uint8_t> const& a_data,
@@ -29,7 +29,7 @@ auto base16_encode(
 /**
  * @brief Decodes a Base16 encoded string.
  *
- * @param[in] a_data Base64 encoded string to decode.
+ * @param[in] a_data Base16 encoded string to decode.
  * @param[in][out] a_ec std::error_code that gets set if a problem occurs.
  * @param[in] a_strict Enable/disable strict mode. When on - if an invalid Base16 alphabet
  * character is encountered - an error is returned, else it just gets ignored and the function
