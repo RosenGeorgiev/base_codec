@@ -12,9 +12,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED YES)
 set(STATIC_LIBRARY_TARGET base_codec_static)
 set(SHARED_LIBRARY_TARGET base_codec_shared)
 
-set(LIBRARY_PUBLIC_HEADERS ${CMAKE_CURRENT_LIST_DIR}/include/base_codec/base16.hpp)
+set(
+    LIBRARY_PUBLIC_HEADERS ${CMAKE_CURRENT_LIST_DIR}/include/base_codec/base16.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/include/base_codec/base32.hpp
+)
 set(LIBRARY_PRIVATE_HEADERS)
-set(LIBRARY_SOURCES ${CMAKE_CURRENT_LIST_DIR}/src/base16.cpp)
+set(
+    LIBRARY_SOURCES ${CMAKE_CURRENT_LIST_DIR}/src/base16.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/base32.cpp
+)
 
 add_library(
     ${STATIC_LIBRARY_TARGET} STATIC ${LIBRARY_PUBLIC_HEADERS}

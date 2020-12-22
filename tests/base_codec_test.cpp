@@ -3,6 +3,7 @@
 #include <system_error>
 
 #include <base_codec/base16.hpp>
+#include <base_codec/base32.hpp>
 
 
 TEST_CASE(
@@ -130,3 +131,57 @@ TEST_CASE(
     }
 }
 
+TEST_CASE(
+    "Base32",
+    "[base32_encode]"
+)
+{
+    SECTION("Encode empty")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base32_encode({}, ec) == "");
+        REQUIRE_FALSE(ec);
+    }
+
+    SECTION("Encode 'f'")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base32_encode({'f'}, ec) == "MY======");
+        REQUIRE_FALSE(ec);
+    }
+
+    SECTION("Encode 'fo'")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base32_encode({'f', 'o'}, ec) == "MZXQ====");
+        REQUIRE_FALSE(ec);
+    }
+
+    SECTION("Encode 'foo'")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base32_encode({'f', 'o', 'o'}, ec) == "MZXW6===");
+        REQUIRE_FALSE(ec);
+    }
+
+    SECTION("Encode 'foob'")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base32_encode({'f', 'o', 'o', 'b'}, ec) == "MZXW6YQ=");
+        REQUIRE_FALSE(ec);
+    }
+
+    SECTION("Encode 'fooba'")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base32_encode({'f', 'o', 'o', 'b', 'a'}, ec) == "MZXW6YTB");
+        REQUIRE_FALSE(ec);
+    }
+
+    SECTION("Encode 'foobar'")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base32_encode({'f', 'o', 'o', 'b', 'a', 'r'}, ec) == "MZXW6YTBOI======");
+        REQUIRE_FALSE(ec);
+    }
+}
