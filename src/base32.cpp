@@ -63,7 +63,7 @@ auto base32_encode(
             auto mask_at_pos = mask << (num_bits - 5);
             auto idx = bit_buffer & mask_at_pos;
             idx >>= num_bits - 5;
-            bit_buffer &= ~mask_at_pos;
+            // bit_buffer &= ~mask_at_pos;
             num_bits -= 5;
             try
             {
@@ -119,6 +119,58 @@ auto base32_encode(
     }
 
     return s.str();
+}
+
+auto base32_decode(
+    std::string_view const& a_data,
+    std::error_code& a_ec,
+    bool a_strict,
+    char a_pad_character
+)
+-> std::vector<std::uint8_t>
+{
+    std::vector<std::uint8_t> ret;
+
+    static std::bitset<40> const mask {0xFF};
+    std::uint64_t num_bits = 0;
+    std::bitset<40> bit_buffer;
+
+    for (auto const datum : a_data)
+    {
+        if (datum == a_pad_character)
+        {
+            break;
+        }
+
+        try
+        {
+            std::uint8_t value = base32_decode_alpahbet.at(datum);
+            bit_buffer <<= 5;
+            bit_buffer |= value;
+            num_bits += 5;
+
+            while (num_bits >= 8)
+            {
+                auto mask_at_pos = mask << (num_bits - 8);
+                auto value = bit_buffer & mask_at_pos;
+                value >>= num_bits - 8;
+                ret.push_back(static_cast<std::uint8_t>(value.to_ulong()));
+                // bit_buffer &= ~mask_at_pos;
+                num_bits -= 8;
+            }
+        } catch (std::out_of_range const& e)
+        {
+            if (a_strict)
+            {
+                a_ec = std::make_error_code(std::errc::invalid_argument);
+                return {};
+            }
+
+            continue;
+        }
+    }
+
+    return ret;
 }
 
 }   // namespace base_codec

@@ -133,13 +133,20 @@ TEST_CASE(
 
 TEST_CASE(
     "Base32",
-    "[base32_encode]"
+    "[base32_encode][base32_decode]"
 )
 {
     SECTION("Encode empty")
     {
         std::error_code ec;
         REQUIRE(rs::base_codec::base32_encode({}, ec) == "");
+        REQUIRE_FALSE(ec);
+    }
+
+    SECTION("Decode empty")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base32_decode("", ec) == std::vector<std::uint8_t>{});
         REQUIRE_FALSE(ec);
     }
 
@@ -150,10 +157,24 @@ TEST_CASE(
         REQUIRE_FALSE(ec);
     }
 
+    SECTION("Decode 'MY======'")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base32_decode("MY======", ec) == std::vector<std::uint8_t>{'f'});
+        REQUIRE_FALSE(ec);
+    }
+
     SECTION("Encode 'fo'")
     {
         std::error_code ec;
         REQUIRE(rs::base_codec::base32_encode({'f', 'o'}, ec) == "MZXQ====");
+        REQUIRE_FALSE(ec);
+    }
+
+    SECTION("Decode 'MZXQ===='")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base32_decode("MZXQ====", ec) == std::vector<std::uint8_t>{'f', 'o'});
         REQUIRE_FALSE(ec);
     }
 
@@ -164,10 +185,24 @@ TEST_CASE(
         REQUIRE_FALSE(ec);
     }
 
+    SECTION("Decode 'MZXW6==='")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base32_decode("MZXW6===", ec) == std::vector<std::uint8_t>{'f', 'o', 'o'});
+        REQUIRE_FALSE(ec);
+    }
+
     SECTION("Encode 'foob'")
     {
         std::error_code ec;
         REQUIRE(rs::base_codec::base32_encode({'f', 'o', 'o', 'b'}, ec) == "MZXW6YQ=");
+        REQUIRE_FALSE(ec);
+    }
+
+    SECTION("Decode 'MZXW6YQ='")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base32_decode("MZXW6YQ=", ec) == std::vector<std::uint8_t>{'f', 'o', 'o', 'b'});
         REQUIRE_FALSE(ec);
     }
 
@@ -178,10 +213,31 @@ TEST_CASE(
         REQUIRE_FALSE(ec);
     }
 
+    SECTION("Decode 'MZXW6YTB'")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base32_decode("MZXW6YTB", ec) == std::vector<std::uint8_t>{'f', 'o', 'o', 'b', 'a'});
+        REQUIRE_FALSE(ec);
+    }
+
     SECTION("Encode 'foobar'")
     {
         std::error_code ec;
         REQUIRE(rs::base_codec::base32_encode({'f', 'o', 'o', 'b', 'a', 'r'}, ec) == "MZXW6YTBOI======");
         REQUIRE_FALSE(ec);
+    }
+
+    SECTION("Decode 'MZXW6YTBOI======'")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base32_decode("MZXW6YTBOI======", ec) == std::vector<std::uint8_t>{'f', 'o', 'o', 'b', 'a', 'r'});
+        REQUIRE_FALSE(ec);
+    }
+
+    SECTION("Decode invalid")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base32_decode("394uijifkwlenkl2jh34", ec) == std::vector<std::uint8_t>{});
+        REQUIRE(ec);
     }
 }
