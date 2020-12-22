@@ -133,7 +133,7 @@ TEST_CASE(
 
 TEST_CASE(
     "Base32",
-    "[base32_encode][base32_decode]"
+    "[base32_encode][base32_decode][is_base32]"
 )
 {
     SECTION("Encode empty")
@@ -239,5 +239,11 @@ TEST_CASE(
         std::error_code ec;
         REQUIRE(rs::base_codec::base32_decode("394uijifkwlenkl2jh34", ec) == std::vector<std::uint8_t>{});
         REQUIRE(ec);
+    }
+
+    SECTION("Validate if string is Base32 encoded")
+    {
+        REQUIRE(rs::base_codec::is_base32("MZXW6YTBOI======"));
+        REQUIRE_FALSE(rs::base_codec::is_base32("daskjdasd-9uas900909009asdasd"));
     }
 }

@@ -32,7 +32,7 @@ auto base32_encode(
 -> std::string;
 
 /**
- * @brief
+ * @brief Decodes a Base32 encoded string.
  *
  * @param[in] a_data Base32 encoded string to decode.
  * @param[in][out] a_ec std::error_code that gets set if a problem occurs.
@@ -50,6 +50,21 @@ auto base32_decode(
     char a_pad_character = '='
 )
 -> std::vector<std::uint8_t>;
+
+/**
+ * @brief Checks if the string contains invalid Base32 characters.
+ *
+ * @param[in] String to check for conformance.
+ * @param[in] a_pad_character Character to recognize as a padding character.
+ *
+ * @returns true If the string is possibly Base32 encoded.
+ * @returns false If the string can't be Base32 encoded, or at least not strictly.
+ */
+auto is_base32(
+    std::string_view const& a_data,
+    char a_pad_character = '='
+)
+-> bool;
 
 }   // namespace base_codec
 }   // namespace rs

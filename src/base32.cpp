@@ -173,6 +173,23 @@ auto base32_decode(
     return ret;
 }
 
+auto is_base32(
+    std::string_view const& a_data,
+    char a_pad_character
+)
+-> bool
+{
+    for (auto const datum : a_data)
+    {
+        if (datum != a_pad_character && !base32_decode_alpahbet.contains(datum))
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 }   // namespace base_codec
 }   // namespace rs
 
