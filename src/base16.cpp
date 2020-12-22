@@ -16,22 +16,8 @@ static std::vector<char> const base16_encode_alphabet = {
 };
 
 static std::unordered_map<char, uint8_t> const base16_decode_alpahbet = {
-    {'0', 0},
-    {'1', 1},
-    {'2', 2},
-    {'3', 3},
-    {'4', 4},
-    {'5', 5},
-    {'6', 6},
-    {'7', 7},
-    {'8', 8},
-    {'9', 9},
-    {'A', 10},
-    {'B', 11},
-    {'C', 12},
-    {'D', 13},
-    {'E', 14},
-    {'F', 15}
+    {'0', 0}, {'1', 1}, {'2', 2}, {'3', 3}, {'4', 4}, {'5', 5}, {'6', 6}, {'7', 7}, {'8', 8},
+    {'9', 9}, {'A', 10}, {'B', 11}, {'C', 12}, {'D', 13}, {'E', 14}, {'F', 15}
 };
 
 auto base16_encode(
@@ -54,6 +40,7 @@ auto base16_encode(
         } catch (std::out_of_range const& e)
         {
             a_ec = std::make_error_code(std::errc::result_out_of_range);
+            assert(false && "you really shouldn't be here");
             return {};
         }
     }
@@ -61,6 +48,9 @@ auto base16_encode(
     return s.str();
 }
 
+// FIXME - In strict mode if one of the character is non-alphabetic, we'll skip both, leading to
+//         data loss.
+// FIXME - Handle single character input.
 auto base16_decode(
     std::string_view const& a_data,
     std::error_code& a_ec,
@@ -75,7 +65,7 @@ auto base16_decode(
 
     std::vector<std::uint8_t> ret;
 
-    for (auto idx = 0; idx < a_data.size() - 1; idx+=2)
+    for (auto idx = 0; idx < a_data.size(); idx+=2)
     {
         auto datum_one = a_data[idx];
         auto datum_two = a_data[idx + 1];
