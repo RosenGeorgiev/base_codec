@@ -446,6 +446,18 @@ TEST_CASE(
 }
 
 TEST_CASE(
+    "Base64 validate",
+    "[is_base64]"
+)
+{
+    SECTION("Validate if string is Base64 encoded")
+    {
+        REQUIRE(rs::base_codec::is_base64("Zm9vYmFy"));
+        REQUIRE_FALSE(rs::base_codec::is_base64("****"));
+    }
+}
+
+TEST_CASE(
     "Base64Url encode",
     "[base64url_encode]"
 )
@@ -554,3 +566,16 @@ TEST_CASE(
         REQUIRE_FALSE(ec);
     }
 }
+
+TEST_CASE(
+    "Base64Url validate",
+    "[is_base64url]"
+)
+{
+    SECTION("Validate if string is Base64Url encoded")
+    {
+        REQUIRE(rs::base_codec::is_base64url("Zm9vYmFy"));
+        REQUIRE_FALSE(rs::base_codec::is_base64url("****"));
+    }
+}
+

@@ -220,6 +220,42 @@ auto base64url_decode(
     return base64_decode_algo(a_data, a_ec, a_strict, a_pad_character, base64url_decode_alpahbet);
 }
 
+static auto is_base64_algo(
+    std::string_view const& a_data,
+    char a_pad_character,
+    std::unordered_map<char, uint8_t> const& a_verify_alphabet
+)
+-> bool
+{
+    for (auto const datum : a_data)
+    {
+        if (datum != a_pad_character && !a_verify_alphabet.contains(datum))
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+auto is_base64(
+    std::string_view const& a_data,
+    char a_pad_character
+)
+-> bool
+{
+    return is_base64_algo(a_data, a_pad_character, base64_decode_alpahbet);
+}
+
+auto is_base64url(
+    std::string_view const& a_data,
+    char a_pad_character
+)
+-> bool
+{
+    return is_base64_algo(a_data, a_pad_character, base64url_decode_alpahbet);
+}
+
 }   // namespace base_codec
 }   // namespace rs
 

@@ -96,6 +96,36 @@ auto base64url_decode(
 )
 -> std::vector<std::uint8_t>;
 
+/**
+ * @brief Checks if the string contains invalid Base64 characters.
+ *
+ * @param[in] a_data String to check for conformance.
+ * @param[in] a_pad_character Character to recognize as a padding character.
+ *
+ * @returns true If the string is possibly Base64 encoded.
+ * @returns false If the string can't be Base64 encoded, or at least not strictly.
+ */
+auto is_base64(
+    std::string_view const& a_data,
+    char a_pad_character = '='
+)
+-> bool;
+
+/**
+ * @brief Checks if the string contains invalid Base64Url characters.
+ *
+ * @param[in] a_data String to check for conformance.
+ * @param[in] a_pad_character Character to recognize as a padding character.
+ *
+ * @returns true If the string is possibly Base64Url encoded.
+ * @returns false If the string can't be Base64Url encoded, or at least not strictly.
+ */
+auto is_base64url(
+    std::string_view const& a_data,
+    char a_pad_character = '='
+)
+-> bool;
+
 }   // namespace base_codec
 }   // namespace rs
 
