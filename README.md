@@ -1,7 +1,8 @@
 [![License: WTFPL](http://www.wtfpl.net/wp-content/uploads/2012/12/wtfpl-badge-2.png)](http://www.wtfpl.net/txt/copying/)
 # About
 `base_codec` is a library containing base16/32/64 encoding/decoding routines, implementing
-[RFC4648](https://tools.ietf.org/html/rfc4648).
+[RFC4648](https://tools.ietf.org/html/rfc4648). The code is not battle tested yet, so it might have
+issues.
 
 # Requirements
 - [Catch2](https://github.com/catchorg/Catch2) for testing. Not mandatory, since you can turn of
