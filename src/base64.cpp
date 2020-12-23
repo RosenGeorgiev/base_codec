@@ -155,6 +155,7 @@ static auto base64_decode_algo(
 -> std::vector<std::uint8_t>
 {
     std::vector<std::uint8_t> ret;
+    ret.reserve((a_data.size() / 4) * 3);
 
     static std::bitset<24> const mask {0xFF};
     std::uint64_t num_bits = 0;
