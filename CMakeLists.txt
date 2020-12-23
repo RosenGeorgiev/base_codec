@@ -15,11 +15,13 @@ set(SHARED_LIBRARY_TARGET base_codec_shared)
 set(
     LIBRARY_PUBLIC_HEADERS ${CMAKE_CURRENT_LIST_DIR}/include/base_codec/base16.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/base_codec/base32.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/include/base_codec/base64.hpp
 )
 set(LIBRARY_PRIVATE_HEADERS)
 set(
     LIBRARY_SOURCES ${CMAKE_CURRENT_LIST_DIR}/src/base16.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/base32.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/base64.cpp
 )
 
 add_library(

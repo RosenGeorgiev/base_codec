@@ -4,11 +4,12 @@
 
 #include <base_codec/base16.hpp>
 #include <base_codec/base32.hpp>
+#include <base_codec/base64.hpp>
 
 
 TEST_CASE(
     "Base16 encode",
-    "[base16_encode][is_base16]"
+    "[base16_encode]"
 )
 {
     SECTION("Encode empty")
@@ -323,6 +324,233 @@ TEST_CASE(
     {
         std::error_code ec;
         REQUIRE(rs::base_codec::base32hex_encode({'f', 'o', 'o', 'b', 'a', 'r'}, ec) == "CPNMUOJ1E8======");
+        REQUIRE_FALSE(ec);
+    }
+}
+
+TEST_CASE(
+    "Base64 encode",
+    "[base64_encode]"
+)
+{
+    SECTION("Encode empty")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base64_encode({}, ec) == "");
+        REQUIRE_FALSE(ec);
+    }
+
+    SECTION("Encode 'f'")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base64_encode({'f'}, ec) == "Zg==");
+        REQUIRE_FALSE(ec);
+    }
+
+    SECTION("Encode 'fo'")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base64_encode({'f', 'o'}, ec) == "Zm8=");
+        REQUIRE_FALSE(ec);
+    }
+
+    SECTION("Encode 'foo'")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base64_encode({'f', 'o', 'o'}, ec) == "Zm9v");
+        REQUIRE_FALSE(ec);
+    }
+
+    SECTION("Encode 'foob'")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base64_encode({'f', 'o', 'o', 'b'}, ec) == "Zm9vYg==");
+        REQUIRE_FALSE(ec);
+    }
+
+    SECTION("Encode 'fooba'")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base64_encode({'f', 'o', 'o', 'b', 'a'}, ec) == "Zm9vYmE=");
+        REQUIRE_FALSE(ec);
+    }
+
+    SECTION("Encode 'foobar'")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base64_encode({'f', 'o', 'o', 'b', 'a', 'r'}, ec) == "Zm9vYmFy");
+        REQUIRE_FALSE(ec);
+    }
+}
+
+TEST_CASE(
+    "Base64 decode",
+    "[base64_decode]"
+)
+{
+    SECTION("Decode empty")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base64_decode("", ec) == std::vector<std::uint8_t>{});
+        REQUIRE_FALSE(ec);
+    }
+
+    SECTION("Decode 'Zg=='")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base64_decode("Zg==", ec) == std::vector<std::uint8_t>{'f'});
+        REQUIRE_FALSE(ec);
+    }
+
+    SECTION("Decode 'Zm8='")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base64_decode("Zm8=", ec) == std::vector<std::uint8_t>{'f', 'o'});
+        REQUIRE_FALSE(ec);
+    }
+
+    SECTION("Decode 'Zm9v'")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base64_decode("Zm9v", ec) == std::vector<std::uint8_t>{'f', 'o', 'o'});
+        REQUIRE_FALSE(ec);
+    }
+
+    SECTION("Decode 'Zm9vYg=='")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base64_decode("Zm9vYg==", ec) == std::vector<std::uint8_t>{'f', 'o', 'o', 'b'});
+        REQUIRE_FALSE(ec);
+    }
+
+    SECTION("Decode 'Zm9vYmE='")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base64_decode("Zm9vYmE=", ec) == std::vector<std::uint8_t>{'f', 'o', 'o', 'b', 'a'});
+        REQUIRE_FALSE(ec);
+    }
+
+    SECTION("Decode 'Zm9vYmFy'")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base64_decode("Zm9vYmFy", ec) == std::vector<std::uint8_t>{'f', 'o', 'o', 'b', 'a', 'r'});
+        REQUIRE_FALSE(ec);
+    }
+
+    SECTION("Decode invalid")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base64_decode("****", ec) == std::vector<std::uint8_t>{});
+        REQUIRE(ec);
+    }
+}
+
+TEST_CASE(
+    "Base64Url encode",
+    "[base64url_encode]"
+)
+{
+    SECTION("Encode empty")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base64url_encode({}, ec) == "");
+        REQUIRE_FALSE(ec);
+    }
+
+    SECTION("Encode 'f'")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base64url_encode({'f'}, ec) == "Zg");
+        REQUIRE_FALSE(ec);
+    }
+
+    SECTION("Encode 'fo'")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base64url_encode({'f', 'o'}, ec) == "Zm8");
+        REQUIRE_FALSE(ec);
+    }
+
+    SECTION("Encode 'foo'")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base64url_encode({'f', 'o', 'o'}, ec) == "Zm9v");
+        REQUIRE_FALSE(ec);
+    }
+
+    SECTION("Encode 'foob'")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base64url_encode({'f', 'o', 'o', 'b'}, ec) == "Zm9vYg");
+        REQUIRE_FALSE(ec);
+    }
+
+    SECTION("Encode 'fooba'")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base64url_encode({'f', 'o', 'o', 'b', 'a'}, ec) == "Zm9vYmE");
+        REQUIRE_FALSE(ec);
+    }
+
+    SECTION("Encode 'foobar'")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base64url_encode({'f', 'o', 'o', 'b', 'a', 'r'}, ec) == "Zm9vYmFy");
+        REQUIRE_FALSE(ec);
+    }
+}
+
+TEST_CASE(
+    "Base64Url decode",
+    "[base64url_decode]"
+)
+{
+    SECTION("Decode empty")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base64url_decode("", ec) == std::vector<std::uint8_t>{});
+        REQUIRE_FALSE(ec);
+    }
+
+    SECTION("Decode 'Zg'")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base64url_decode("Zg", ec) == std::vector<std::uint8_t>{'f'});
+        REQUIRE_FALSE(ec);
+    }
+
+    SECTION("Decode 'Zm8'")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base64url_decode("Zm8", ec) == std::vector<std::uint8_t>{'f', 'o'});
+        REQUIRE_FALSE(ec);
+    }
+
+    SECTION("Decode 'Zm9v'")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base64url_decode("Zm9v", ec) == std::vector<std::uint8_t>{'f', 'o', 'o'});
+        REQUIRE_FALSE(ec);
+    }
+
+    SECTION("Decode 'Zm9vYg'")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base64url_decode("Zm9vYg", ec) == std::vector<std::uint8_t>{'f', 'o', 'o', 'b'});
+        REQUIRE_FALSE(ec);
+    }
+
+    SECTION("Decode 'Zm9vYmE'")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base64url_decode("Zm9vYmE", ec) == std::vector<std::uint8_t>{'f', 'o', 'o', 'b', 'a'});
+        REQUIRE_FALSE(ec);
+    }
+
+    SECTION("Decode 'Zm9vYmFy'")
+    {
+        std::error_code ec;
+        REQUIRE(rs::base_codec::base64url_decode("Zm9vYmFy", ec) == std::vector<std::uint8_t>{'f', 'o', 'o', 'b', 'a', 'r'});
         REQUIRE_FALSE(ec);
     }
 }
