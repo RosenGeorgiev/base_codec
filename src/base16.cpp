@@ -48,9 +48,6 @@ auto base16_encode(
     return s.str();
 }
 
-// FIXME - In strict mode if one of the character is non-alphabetic, we'll skip both, leading to
-//         data loss.
-// FIXME - Handle single character input.
 auto base16_decode(
     std::string_view const& a_data,
     std::error_code& a_ec,
@@ -58,24 +55,33 @@ auto base16_decode(
 )
 -> std::vector<std::uint8_t>
 {
-    if (a_data.empty())
+    if (a_strict && a_data.size() % 2 != 0)
     {
+        a_ec = std::make_error_code(std::errc::invalid_argument);
         return {};
     }
 
     std::vector<std::uint8_t> ret;
+    ret.reserve(a_data.size() / 2);
 
-    for (auto idx = 0; idx < a_data.size(); idx+=2)
+    bool is_even = true;
+    std::uint8_t decoded = 0;
+
+    for (auto const datum : a_data)
     {
-        auto datum_one = a_data[idx];
-        auto datum_two = a_data[idx + 1];
-
-        std::uint8_t decoded = 0;
-
         try
         {
-            decoded |= base16_decode_alpahbet.at(datum_one) << 4;
-            decoded |= base16_decode_alpahbet.at(datum_two);
+            if (is_even)
+            {
+                decoded |= base16_decode_alpahbet.at(datum) << 4;
+            } else
+            {
+                decoded |= base16_decode_alpahbet.at(datum);
+                ret.push_back(decoded);
+                decoded = 0;
+            }
+
+            is_even = !is_even;
         } catch (std::out_of_range const& e)
         {
             if (a_strict)
@@ -86,8 +92,6 @@ auto base16_decode(
 
             continue;
         }
-
-        ret.push_back(decoded);
     }
 
     return ret;
