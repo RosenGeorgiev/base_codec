@@ -12,6 +12,7 @@ steps:
     - mkdir build
     - pushd build
     - ccmake .. -DCMAKE_BUILD_TYPE=Debug -DBASE_CODEC_ENABLE_TESTS=ON
+    - make -j4
     - ctest
 
   trigger:
