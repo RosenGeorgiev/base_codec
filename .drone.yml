@@ -1,0 +1,20 @@
+kind: pipeline
+type: docker
+name: base_codec
+
+steps:
+- name: build
+  image: ubuntu:groovy
+  commands:
+    - apt-get update
+    - apt-get upgrade
+    - apt-get install build-essential cmake catch2
+    - mkdir build
+    - pushd build
+    - ccmake .. -DCMAKE_BUILD_TYPE=Debug -DBASE_CODEC_ENABLE_TESTS=ON
+    - make -j4
+    - ctest
+
+  trigger:
+    branch:
+    - master
